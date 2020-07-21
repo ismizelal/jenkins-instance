@@ -26,15 +26,6 @@ def slavePodTemplate = """
           volumeMounts:
             - mountPath: /var/run/docker.sock
               name: docker-sock
-        - name: ansible
-          image: "ansible/ansible:default"
-          imagePullPolicy: IfNotPresent
-          command:
-          - cat
-          tty: true
-          volumeMounts:
-            - mountPath: /var/run/docker.sock
-              name: docker-sock
         - name: docker
           image: docker:latest
           imagePullPolicy: IfNotPresent
@@ -62,7 +53,14 @@ def slavePodTemplate = """
             hostPath:
               path: /var/run/docker.sock
     """
-    podTemplate(name: k8slabel, label: k8slabel, yaml: slavePodTemplate, showRawYaml: false) {
+properties([
+  parameters([
+    booleanParam(defaultValue: false, 
+    description: 'Please select to see more info', name: 'DebugMode'), 
+    choice(choices: ['DEV', 'QA', 'STAGE', 'PROD'], 
+    description: 'Please select where to deploy', name: 'ENV')])])
+
+    podTemplate(name: k8slabel, label: k8slabel, yaml: slavePodTemplate, showRawYaml: params.DebugMode) {
       node(k8slabel) {
 # if we want our code organized press shift + tab
 
@@ -79,19 +77,22 @@ sh 'docker --version'
 
 container("terraform"){
 
+  println("""
+  
+  Environment: ${params.ENV}
+  
+  """)
+
     sh 'terraform version'
 }
-
-
     }
 
-    stage("Ansible Deploy"){
+     stage("Kubectl Deploy"){
 
-container("ansible"){
+container("fuchicorptools"){
 
-    sh 'ansible --version'
+    sh 'kubectl version'
 }
-    
-      }
+    }
     }
     }
