@@ -49,17 +49,22 @@ node(k8slabel) {
 stage('Pull SCM') {
 
 //below this just cloning the repo
-  git 'https://github.com/fsadykov/jenkins-instance.git'
+  git 'https://github.com/tavusb/jenkins-instance.git'
 
     println('Pulling th source code')
 }
-stage("Packer validate") {
-println('Validating packer code')
-}
+dir('class4/packer/') {
+            container('packer') {
+                stage("Packer Validate") {
+                    println('Validating the packer code.')
+                    sh 'packer validate jenkins.json'
+                }
 
 stage("Packer Build") {
-    println("Selected AWS region is : ${aws_region}") //we use "" for variables
+    println("Selected AWS region is : ${aws_region}") // we use "" for variables
 println('Building the packer')
+}
+}
 }
 }
 }
