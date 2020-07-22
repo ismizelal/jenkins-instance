@@ -1,10 +1,10 @@
-def first_name = "Frank" // String Type 
+def first_name = "Tavus" // String Type 
 
 def names = ["Anna", "Nastya", "Vova" ] // List of Strings
 
 def myInfo = [
-    "first_name": "Farkhod", 
-    "last_name": "Sadykov"
+    "first_name": "Tavus", 
+    "last_name": "Beshimova"
     ] // Map in groovy 
 
 def debugMode = false // Bool variale in groovy 
